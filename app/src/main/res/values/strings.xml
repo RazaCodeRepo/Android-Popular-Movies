@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+
+    <string name="popular_title">Sort By Popularity</string>
+
+    <string name="rating_title">Sort By Ratings</string>
+
+    <string name="error_message">An Error Has Occured. Please Check Your Internet Connection.</string>
+
+    <string name="tv_plot_tag"><u>Plot Synopsis</u></string>
+
+    <string name="tv_rating_tag"><u>User Rating</u></string>
+
+    <string name="tv_date_tag"><u>Release Date</u></string>
+
+    <string name="popularity_sort">Sorted By Popularity</string>
+
+    <string name="ratings_sort">Sorted By Ratings</string>
+
+    <string name="favorites_title">Favorite</string>
+
+    <string name="tv_movieTitle">Chappie</string>
+
+    <string name="tv_movieReleaseDate">2015</string>
+
+    <string name="tv_movieRatings">8.3/10</string>
+
+    <string name="tv_movieSummary">"Every child comes into the fworld full of promise and none more so then Chappie: he is gifted, special, a prodigy. Chappie he is a robot.</string>
+
+    <string name="tv_trailerTag">Trailers:</string>
+
+    <string name="add_favorites">Added To Favorites</string>
+
+    <string name="lv_trailer">Trailer</string>
+
+    <string name="favorite_sort">Sorted By Favorites</string>
+
+    <string name="favorite_main_acitivty">Sort By Favorites</string>
+
+    <string name="tv_reviewTag">Review By </string>
+
+
+
+</resources>
