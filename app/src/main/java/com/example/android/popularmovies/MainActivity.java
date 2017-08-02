@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity{
             int movieDateColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_DATE);
             int movieRatingColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_RATING);
             int movieSynopsisColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS);
-            while(data.moveToFirst()){
+            while(data.moveToNext()){
                 int current_ID = data.getInt(_idColumnIndex);
                 String currentMovieID = data.getString(movieIDColumnIndex);
                 String currentMovieTitle = data.getString(movieTitleColumnIndex);

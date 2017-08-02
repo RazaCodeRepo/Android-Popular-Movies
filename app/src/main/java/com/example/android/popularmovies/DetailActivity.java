@@ -218,5 +218,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
     }
 
 
+
+
 }
 
