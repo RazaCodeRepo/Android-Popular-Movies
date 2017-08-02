@@ -8,6 +8,5 @@
         android:id="@+id/favorite"
         android:title="@string/favorites_title"
         app:showAsAction="always"
-        style="?android:attr/starStyle"
-        android:checkable="true"/>
+        android:icon="@drawable/star_off" />
 </menu>

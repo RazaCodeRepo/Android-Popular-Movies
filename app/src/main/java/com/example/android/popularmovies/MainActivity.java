@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity{
                 ratingsBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
                 Toast.makeText(this, getResources().getString(R.string.ratings_sort), Toast.LENGTH_SHORT).show();
                 loaderManager.restartLoader(TMDB_QUERY_LOADER, ratingsBundle, movieLoaderCallbacks).forceLoad();
+                setTitle("Sorted By Ratings");
                 return true;
 
             case R.id.menu_favorite:
@@ -190,8 +191,7 @@ public class MainActivity extends AppCompatActivity{
                 public Cursor loadInBackground() {
                     String[] projection = {MovieContract.MovieEntry._ID,
                             MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE,
-                            MovieContract.MovieEntry.COLUMN_MOVIE_NAME,
-                            MovieContract.MovieEntry.COLUMN_MOVIE_SUMMARY };
+                            MovieContract.MovieEntry.COLUMN_MOVIE_NAME };
 
                     return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, null, null, null);
                 }

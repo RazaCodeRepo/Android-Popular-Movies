@@ -1,5 +1,6 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.android.popularmovies.data.MovieContract;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 
 import java.util.ArrayList;
@@ -98,6 +100,33 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+            case R.id.favorite:
+                if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState())){
+                    item.setIcon(R.drawable.star_on);
+                    addToDatabase(movieID, movieTitle, movieImage);
+                }else{
+                    Toast.makeText(this, "Un-Favorite", Toast.LENGTH_SHORT).show();
+                    item.setIcon(R.drawable.star_off);
+                }
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
 
 
     private LoaderManager.LoaderCallbacks<List<Trailer>> trailerLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Trailer>>() {
@@ -166,6 +195,19 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
         String trailerURL = selectedTrailer.getTrailerURL();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerURL));
         startActivity(intent);
+    }
+
+    private void addToDatabase(String id, String name, String image){
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, id);
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE, image);
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_NAME, name);
+
+        Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
+        if(uri != null){
+            Toast.makeText(getBaseContext(), "Added To Favorites", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

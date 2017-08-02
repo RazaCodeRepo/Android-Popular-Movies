@@ -38,7 +38,7 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
         Movie movie = getItem(position);
 
-        ImageView posterImageView = (ImageView)listItemView.findViewById(R.id.iv_poster);
+        ImageView posterImageView = (ImageView)listItemView.findViewById(R.id.main_iv_poster);
         String movieLocation = movie.getImageString();
         Log.v(LOG_TAG, movieLocation);
         Picasso.with(getContext()).setLoggingEnabled(true);

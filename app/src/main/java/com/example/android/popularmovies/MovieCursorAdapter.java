@@ -29,7 +29,7 @@ public class MovieCursorAdapter extends CursorAdapter {
 
     public void bindView(View view, Context context, Cursor cursor){
 
-        ImageView imageView = (ImageView)view.findViewById(R.id.iv_poster);
+        ImageView imageView = (ImageView)view.findViewById(R.id.main_iv_poster);
 
         String imageURL = cursor.getString(cursor.getColumnIndexOrThrow(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE));
         Picasso.with(context).setLoggingEnabled(true);
