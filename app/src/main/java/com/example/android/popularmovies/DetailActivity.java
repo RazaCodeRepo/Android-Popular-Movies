@@ -40,6 +40,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
     private static final int TMDB_TRAILER_LOADER = 243;
     private static final int TMDB_REVIEW_LOADER = 897;
+    private static final int TMDB_DATABASE_LOADER = 956;
 
     RecyclerView detailView;
 
@@ -47,6 +48,8 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
     List<Trailer> trailers;
 
     DetailRecyclerViewAdapter detailRecyclerViewAdapter;
+
+    boolean isInDatabase = false;
 
 
 
@@ -97,6 +100,8 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
             reviewLoaderManager.restartLoader(TMDB_REVIEW_LOADER, reviewBundle, reviewLoaderCallbacks).forceLoad();
         }
 
+        getSupportLoaderManager().initLoader(TMDB_DATABASE_LOADER, null, cursorLoaderCallbacks).forceLoad();
+
 
 
         detailView.setAdapter(detailRecyclerViewAdapter);
@@ -115,7 +120,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
         switch(item.getItemId()){
             case R.id.favorite:
-                if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState())){
+                if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState()) && isInDatabase == true){
                     item.setIcon(R.drawable.star_on);
                     addToDatabase(movieID, movieTitle, movieImage, movieDate, movieRating, movieSummary);
                 }else{
@@ -217,7 +222,54 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
         }
     }
 
+    private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>(){
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new AsyncTaskLoader<Cursor>(DetailActivity.this) {
 
+                Cursor mMovieData = null;
+
+                @Override
+                protected void onStartLoading() {
+                    if (mMovieData != null){
+                        deliverResult(mMovieData);
+                    }else{
+                        forceLoad();
+                    }
+                }
+
+                @Override
+                public Cursor loadInBackground() {
+                    String[] projection = {MovieContract.MovieEntry._ID,
+                            MovieContract.MovieEntry.COLUMN_MOVIE_ID };
+
+                    return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, null, null, null);
+                }
+
+                public void deliverResult(Cursor data){
+                    mMovieData = data;
+                    super.deliverResult(data);
+                }
+            };
+        }
+
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+//            movieCursorAdapter.swapCursor(data);
+            int movieIDColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+            String currentMovieID = data.getString(movieIDColumnIndex);
+            if(currentMovieID.equals(movieID)){
+                isInDatabase = true;
+            }
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+//            movieCursorAdapter.swapCursor(null);
+        }
+    };
 
 
 }
