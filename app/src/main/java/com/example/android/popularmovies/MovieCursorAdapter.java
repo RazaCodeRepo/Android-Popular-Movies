@@ -37,4 +37,6 @@ public class MovieCursorAdapter extends CursorAdapter {
                 .placeholder(R.mipmap.ic_launcher).into(imageView);
 
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -46,6 +47,8 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
     List<Trailer> trailers;
 
     DetailRecyclerViewAdapter detailRecyclerViewAdapter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +117,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
             case R.id.favorite:
                 if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState())){
                     item.setIcon(R.drawable.star_on);
-                    addToDatabase(movieID, movieTitle, movieImage);
+                    addToDatabase(movieID, movieTitle, movieImage, movieDate, movieRating, movieSummary);
                 }else{
                     Toast.makeText(this, "Un-Favorite", Toast.LENGTH_SHORT).show();
                     item.setIcon(R.drawable.star_off);
@@ -197,12 +200,16 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
         startActivity(intent);
     }
 
-    private void addToDatabase(String id, String name, String image){
+    private void addToDatabase(String id, String name, String image, String date, String rating, String summary){
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, id);
         contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE, image);
         contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_NAME, name);
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_DATE, date);
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_RATING, rating);
+        contentValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS, summary);
+
 
         Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
         if(uri != null){

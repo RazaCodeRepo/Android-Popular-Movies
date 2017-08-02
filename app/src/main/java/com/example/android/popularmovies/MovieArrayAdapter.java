@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -22,8 +23,14 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
     public static final String LOG_TAG = MovieArrayAdapter.class.getName();
 
+    private List<Movie> temp;
+
+    Activity mContext;
+
     public MovieArrayAdapter(Activity context, List<Movie> moviesList){
         super(context, 0, moviesList);
+        mContext = context;
+        temp = moviesList;
     }
 
     @NonNull
@@ -48,4 +55,6 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
 
         return listItemView;
     }
+
+
 }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.android.popularmovies.data.MovieContract;
 import com.example.android.popularmovies.utilities.NetworkUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity{
     private static final String LOADER_TMDB_BUNDLE = "stringURL";
 
     private MovieCursorAdapter movieCursorAdapter;
+
+    Cursor theCursor;
 
 
 
@@ -112,6 +115,8 @@ public class MainActivity extends AppCompatActivity{
             progressBar.setVisibility(View.GONE);
             mErrorMessageDisplay.setVisibility(View.VISIBLE);
         }
+
+        Cursor justChecking = theCursor;
 
 
     }
@@ -190,8 +195,12 @@ public class MainActivity extends AppCompatActivity{
                 @Override
                 public Cursor loadInBackground() {
                     String[] projection = {MovieContract.MovieEntry._ID,
+                            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
                             MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE,
-                            MovieContract.MovieEntry.COLUMN_MOVIE_NAME };
+                            MovieContract.MovieEntry.COLUMN_MOVIE_NAME,
+                            MovieContract.MovieEntry.COLUMN_MOVIE_DATE,
+                            MovieContract.MovieEntry.COLUMN_MOVIE_RATING,
+                            MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS };
 
                     return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, null, null, null);
                 }
@@ -207,6 +216,27 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             movieCursorAdapter.swapCursor(data);
+            List<Movie> dbMovies = new ArrayList<Movie>();
+            int _idColumnIndex = data.getColumnIndex(MovieContract.MovieEntry._ID);
+            int movieIDColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+            int movieTitleColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_NAME);
+            int movieImageColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE);
+            int movieDateColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_DATE);
+            int movieRatingColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_RATING);
+            int movieSynopsisColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS);
+            while(data.moveToFirst()){
+                int current_ID = data.getInt(_idColumnIndex);
+                String currentMovieID = data.getString(movieIDColumnIndex);
+                String currentMovieTitle = data.getString(movieTitleColumnIndex);
+                String currentMovieImage = data.getString(movieImageColumnIndex);
+                String currentMovieDate = data.getString(movieDateColumnIndex);
+                String currentMovieRatings = data.getString(movieRatingColumnIndex);
+                String currentMovieSynopsis = data.getString(movieSynopsisColumnIndex);
+
+                dbMovies.add(new Movie(currentMovieID, currentMovieTitle, currentMovieImage, currentMovieSynopsis, currentMovieRatings, currentMovieDate ));
+            }
+           mMovieAdapter = new MovieArrayAdapter(MainActivity.this, dbMovies);
+
         }
 
         @Override
