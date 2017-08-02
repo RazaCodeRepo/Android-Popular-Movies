@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity{
                 dbMovies.add(new Movie(currentMovieID, currentMovieTitle, currentMovieImage, currentMovieSynopsis, currentMovieRatings, currentMovieDate ));
             }
            mMovieAdapter = new MovieArrayAdapter(MainActivity.this, dbMovies);
-
+            moviesGrid.setAdapter(mMovieAdapter);
         }
 
         @Override
