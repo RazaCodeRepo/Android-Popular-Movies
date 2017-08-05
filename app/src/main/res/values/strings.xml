@@ -39,6 +39,10 @@
 
     <string name="tv_reviewTag">Review By </string>
 
+    <string name="remove_favorites">Removed From Favorites</string>
+
+
+
 
 
 </resources>

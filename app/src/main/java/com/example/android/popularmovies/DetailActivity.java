@@ -30,9 +30,6 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
     public static final String TAG = "DetailActivity";
 
-    private ListView trailerView;
-    private ListView reviewView;
-
     private String movieID;
     private String movieTitle;
     private String movieImage;
@@ -41,19 +38,18 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
     private String movieDate;
     private int selectedMovieID;
 
-
     private static final int TMDB_TRAILER_LOADER = 243;
     private static final int TMDB_REVIEW_LOADER = 897;
     private static final int TMDB_DATABASE_LOADER = 956;
 
-    RecyclerView detailView;
+    private RecyclerView detailView;
 
-    List<MovieReview> reviews;
-    List<Trailer> trailers;
+    private List<MovieReview> reviews;
+    private List<Trailer> trailers;
 
-    DetailRecyclerViewAdapter detailRecyclerViewAdapter;
+    private DetailRecyclerViewAdapter detailRecyclerViewAdapter;
 
-    boolean isInDatabase = true;
+    private boolean isInDatabase = false;
 
 
 
@@ -74,7 +70,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
         movieSummary = intent.getStringExtra("MOVIE_SUMMARY");
         movieRating = intent.getStringExtra("MOVIE_RATING");
         movieDate = intent.getStringExtra("MOVIE_DATE");
-        selectedMovieID = Integer.parseInt(intent.getStringExtra("SELECTED_ID"));
+
 
         reviews = new ArrayList<MovieReview>();
         trailers = new ArrayList<Trailer>();
@@ -113,6 +109,16 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        if (isInDatabase) {
+            MenuItem menuItem = menu.findItem(R.id.action_favorite);
+            menuItem.setIcon(R.drawable.star_on);
+        }
+        return true;
+    }
 
 
     @Override
@@ -126,18 +132,20 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch(item.getItemId()){
-            case R.id.favorite:
-                if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState()) && isInDatabase == false){
+            case R.id.action_favorite:
+                if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState())){
                     item.setIcon(R.drawable.star_on);
                     addToDatabase(movieID, movieTitle, movieImage, movieDate, movieRating, movieSummary);
                 }else{
-                    Toast.makeText(this, "Un-Favorite", Toast.LENGTH_SHORT).show();
+                    String stringId = Integer.toString(selectedMovieID);
+                    Uri uri = MovieContract.MovieEntry.CONTENT_URI;
+                    uri = uri.buildUpon().appendPath(stringId).build();
+                    getContentResolver().delete(uri,null,null);
+                    Toast.makeText(this, getString(R.string.remove_favorites), Toast.LENGTH_SHORT).show();
                     item.setIcon(R.drawable.star_off);
                 }
                 return true;
 
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(DetailActivity.this);
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -227,7 +235,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
         Uri uri = getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
         if(uri != null){
-            Toast.makeText(getBaseContext(), "Added To Favorites", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), getString(R.string.add_favorites), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -251,7 +259,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
                 public Cursor loadInBackground() {
                     String[] projection = {MovieContract.MovieEntry._ID,
                             MovieContract.MovieEntry.COLUMN_MOVIE_ID };
-                    //Uri currentUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, selectedMovieID);
+
                     return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, null, null, null);
                 }
 
@@ -265,13 +273,16 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//            movieCursorAdapter.swapCursor(data);
+            int _idColumnIndex = data.getColumnIndex(MovieContract.MovieEntry._ID);
             int movieIDColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
             while(data.moveToNext()){
+                int current_ID = data.getInt(_idColumnIndex);
                 String currentMovieID = data.getString(movieIDColumnIndex);
+
                 if(currentMovieID.equals(movieID)){
                     isInDatabase = true;
-                    Toast.makeText(DetailActivity.this, "Movie In Database", Toast.LENGTH_SHORT).show();
+                    selectedMovieID = current_ID;
+                    invalidateOptionsMenu();
                 }
             }
 
@@ -280,7 +291,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-//            movieCursorAdapter.swapCursor(null);
+
         }
     };
 
