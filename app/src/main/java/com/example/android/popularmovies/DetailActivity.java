@@ -113,18 +113,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        // If this is a new pet, hide the "Delete" menu item.
-        boolean temp = isInDatabase;
-        if (isInDatabase == true) {
-            MenuItem menuItem = menu.findItem(R.id.favorite);
-            menuItem.setVisible(false);
-            menuItem.setIcon(R.drawable.star_on);
-        }
-        return true;
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
