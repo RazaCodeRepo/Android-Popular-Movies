@@ -59,6 +59,10 @@ public class MainActivity extends AppCompatActivity{
 
     Cursor theCursor;
 
+    int selectedID = 0;
+
+
+
 
 
     @Override
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity{
                 intent.putExtra("MOVIE_SUMMARY", movie.getPlotSynopsis());
                 intent.putExtra("MOVIE_RATING", movie.getUserRating());
                 intent.putExtra("MOVIE_DATE", movie.getRelaseDate());
+                intent.putExtra("SELECTED_ID", Integer.toString(selectedID) );
 
 
                 startActivity(intent);
@@ -134,23 +139,23 @@ public class MainActivity extends AppCompatActivity{
             case R.id.menu_popular:
                 Bundle popularityBundle = new Bundle();
                 popularityBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
-                Toast.makeText(this, getResources().getString(R.string.popularity_sort), Toast.LENGTH_SHORT).show();
                 loaderManager.restartLoader(TMDB_QUERY_LOADER, popularityBundle, movieLoaderCallbacks).forceLoad();
+                Toast.makeText(this, getResources().getString(R.string.popularity_sort), Toast.LENGTH_SHORT).show();
                 return true;
 
             case R.id.menu_rating:
                 Bundle ratingsBundle = new Bundle();
                 ratingsBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
-                Toast.makeText(this, getResources().getString(R.string.ratings_sort), Toast.LENGTH_SHORT).show();
                 loaderManager.restartLoader(TMDB_QUERY_LOADER, ratingsBundle, movieLoaderCallbacks).forceLoad();
                 setTitle("Sorted By Ratings");
+                Toast.makeText(this, getResources().getString(R.string.ratings_sort), Toast.LENGTH_SHORT).show();
                 return true;
 
             case R.id.menu_favorite:
-                Toast.makeText(this, getString(R.string.favorite_sort), Toast.LENGTH_SHORT).show();
                 movieCursorAdapter = new MovieCursorAdapter(this, null);
                 moviesGrid.setAdapter(movieCursorAdapter);
                 getSupportLoaderManager().initLoader(TMDB_CURSOR_LOADER, null, cursorLoaderCallbacks).forceLoad();
+                Toast.makeText(this, getString(R.string.favorite_sort), Toast.LENGTH_SHORT).show();
                 return true;
 
 
@@ -232,7 +237,7 @@ public class MainActivity extends AppCompatActivity{
                 String currentMovieDate = data.getString(movieDateColumnIndex);
                 String currentMovieRatings = data.getString(movieRatingColumnIndex);
                 String currentMovieSynopsis = data.getString(movieSynopsisColumnIndex);
-
+                selectedID = current_ID;
                 dbMovies.add(new Movie(currentMovieID, currentMovieTitle, currentMovieImage, currentMovieSynopsis, currentMovieRatings, currentMovieDate ));
             }
            mMovieAdapter = new MovieArrayAdapter(MainActivity.this, dbMovies);

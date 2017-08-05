@@ -2,12 +2,15 @@ package com.example.android.popularmovies.data;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 /**
  * Created by Kontrol on 7/28/2017.
  */
 
 public class MovieContract {
+
+    public static final String TAG = " CONTRACT ";
 
     public static final String AUTHORITY = "com.example.android.popularmovies";
 
@@ -18,6 +21,7 @@ public class MovieContract {
     public static final class MovieEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES).build();
+
 
         public static final String TABLE_NAME = "movies";
 

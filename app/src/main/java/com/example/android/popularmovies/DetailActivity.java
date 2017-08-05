@@ -1,10 +1,12 @@
 package com.example.android.popularmovies;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +39,8 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
     private String movieSummary;
     private String movieRating;
     private String movieDate;
+    private int selectedMovieID;
+
 
     private static final int TMDB_TRAILER_LOADER = 243;
     private static final int TMDB_REVIEW_LOADER = 897;
@@ -49,7 +53,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
     DetailRecyclerViewAdapter detailRecyclerViewAdapter;
 
-    boolean isInDatabase = false;
+    boolean isInDatabase = true;
 
 
 
@@ -70,6 +74,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
         movieSummary = intent.getStringExtra("MOVIE_SUMMARY");
         movieRating = intent.getStringExtra("MOVIE_RATING");
         movieDate = intent.getStringExtra("MOVIE_DATE");
+        selectedMovieID = Integer.parseInt(intent.getStringExtra("SELECTED_ID"));
 
         reviews = new ArrayList<MovieReview>();
         trailers = new ArrayList<Trailer>();
@@ -109,6 +114,19 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        boolean temp = isInDatabase;
+        if (isInDatabase == true) {
+            MenuItem menuItem = menu.findItem(R.id.favorite);
+            menuItem.setVisible(false);
+            menuItem.setIcon(R.drawable.star_on);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
         return true;
@@ -120,15 +138,17 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
 
         switch(item.getItemId()){
             case R.id.favorite:
-                if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState()) && isInDatabase == true){
+                if(item.getIcon().getConstantState().equals(getDrawable(R.drawable.star_off).getConstantState()) && isInDatabase == false){
                     item.setIcon(R.drawable.star_on);
                     addToDatabase(movieID, movieTitle, movieImage, movieDate, movieRating, movieSummary);
                 }else{
                     Toast.makeText(this, "Un-Favorite", Toast.LENGTH_SHORT).show();
                     item.setIcon(R.drawable.star_off);
                 }
-
                 return true;
+
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(DetailActivity.this);
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -242,7 +262,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
                 public Cursor loadInBackground() {
                     String[] projection = {MovieContract.MovieEntry._ID,
                             MovieContract.MovieEntry.COLUMN_MOVIE_ID };
-
+                    //Uri currentUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, selectedMovieID);
                     return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, null, null, null);
                 }
 
@@ -258,10 +278,14 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 //            movieCursorAdapter.swapCursor(data);
             int movieIDColumnIndex = data.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
-            String currentMovieID = data.getString(movieIDColumnIndex);
-            if(currentMovieID.equals(movieID)){
-                isInDatabase = true;
+            while(data.moveToNext()){
+                String currentMovieID = data.getString(movieIDColumnIndex);
+                if(currentMovieID.equals(movieID)){
+                    isInDatabase = true;
+                    Toast.makeText(DetailActivity.this, "Movie In Database", Toast.LENGTH_SHORT).show();
+                }
             }
+
 
         }
 

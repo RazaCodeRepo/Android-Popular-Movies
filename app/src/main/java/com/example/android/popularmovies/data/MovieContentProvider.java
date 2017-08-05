@@ -68,7 +68,7 @@ public class MovieContentProvider extends ContentProvider {
                 break;
             case MOVIES_WITH_ID:
 
-                selection = MovieEntry.COLUMN_MOVIE_ID + "=?";
+                selection = MovieEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
                 retCursor = db.query(MovieEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
 
