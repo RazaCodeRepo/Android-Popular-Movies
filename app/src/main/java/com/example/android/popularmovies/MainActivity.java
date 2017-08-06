@@ -59,6 +59,10 @@ public class MainActivity extends AppCompatActivity{
 
     private int selectedMovieID;
 
+    boolean checkPopularity = false;
+    boolean checkRatings = false;
+    boolean checkFavorites = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,20 @@ public class MainActivity extends AppCompatActivity{
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message);
 
         movieCursorAdapter = new MovieCursorAdapter(this, null);
+
+        if(savedInstanceState != null){
+            if(savedInstanceState.getBoolean("POPULARITY_CHECK")){
+                Bundle restorePopularityBundle = new Bundle();
+                restorePopularityBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
+                getSupportLoaderManager().initLoader(TMDB_QUERY_LOADER, restorePopularityBundle, movieLoaderCallbacks).forceLoad();
+            } else if(savedInstanceState.getBoolean("RATING_CHECK")){
+                Bundle restoreRatingBundle = new Bundle();
+                restoreRatingBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
+                getSupportLoaderManager().initLoader(TMDB_QUERY_LOADER, restoreRatingBundle, movieLoaderCallbacks).forceLoad();
+            } else{
+                getSupportLoaderManager().initLoader(TMDB_CURSOR_LOADER, null, cursorLoaderCallbacks).forceLoad();
+            }
+        }
 
         Bundle queryBundle = new Bundle();
 
@@ -98,6 +116,8 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
+
+
         queryBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
 
 
@@ -108,10 +128,17 @@ public class MainActivity extends AppCompatActivity{
             loaderManager = getSupportLoaderManager();
             Loader<List<Movie>> movieLoader = loaderManager.getLoader(TMDB_QUERY_LOADER);
             if(movieLoader == null){
+
                 loaderManager.initLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
+                checkPopularity = true;
+                checkRatings = false;
+                checkFavorites = false;
             }
             else{
                 loaderManager.restartLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
+                checkPopularity = true;
+                checkRatings = false;
+                checkFavorites = false;
             }
         }
         else{
@@ -137,6 +164,9 @@ public class MainActivity extends AppCompatActivity{
                 Bundle popularityBundle = new Bundle();
                 popularityBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
                 loaderManager.restartLoader(TMDB_QUERY_LOADER, popularityBundle, movieLoaderCallbacks).forceLoad();
+                checkPopularity = true;
+                checkRatings = false;
+                checkFavorites = false;
                 Toast.makeText(this, getResources().getString(R.string.popularity_sort), Toast.LENGTH_SHORT).show();
 
                 return true;
@@ -145,6 +175,9 @@ public class MainActivity extends AppCompatActivity{
                 Bundle ratingsBundle = new Bundle();
                 ratingsBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
                 loaderManager.restartLoader(TMDB_QUERY_LOADER, ratingsBundle, movieLoaderCallbacks).forceLoad();
+                checkRatings = true;
+                checkPopularity = false;
+                checkFavorites = false;
                 setTitle(R.string.ratings_sort);
                 Toast.makeText(this, getResources().getString(R.string.ratings_sort), Toast.LENGTH_SHORT).show();
 
@@ -157,6 +190,9 @@ public class MainActivity extends AppCompatActivity{
                 moviesGrid.setAdapter(movieCursorAdapter);
                 getSupportLoaderManager().initLoader(TMDB_CURSOR_LOADER, null, cursorLoaderCallbacks).forceLoad();
                 Toast.makeText(this, getString(R.string.favorite_sort), Toast.LENGTH_SHORT).show();
+                checkFavorites = true;
+                checkPopularity = false;
+                checkRatings = false;
                 setTitle(R.string.favorite_sort);
                 return true;
 
@@ -299,6 +335,20 @@ public class MainActivity extends AppCompatActivity{
         }
     };
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("POPULARITY_CHECK", checkPopularity);
+        outState.putBoolean("RATING_CHECK", checkRatings);
+        outState.putBoolean("FAVORITE_CHECK", checkFavorites);
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        boolean check_popularity = savedInstanceState.getBoolean("POPULARITY_CHECK");
+        boolean check_ratings = savedInstanceState.getBoolean("RATING_CHECK");
+        boolean check_favorites = savedInstanceState.getBoolean("FAVORITE_CHECK");
+    }
 }
 
