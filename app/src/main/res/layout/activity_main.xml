@@ -30,6 +30,7 @@
         android:textSize="20sp"
         android:visibility="invisible"
         android:padding="16dp"
-        android:text="@string/error_message"/>
+        android:text="@string/error_message"
+        android:textColor="@color/colorWhite"/>
 
 </FrameLayout>

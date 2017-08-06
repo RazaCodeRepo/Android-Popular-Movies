@@ -61,6 +61,7 @@ public final class NetworkUtils {
     }
 
     public static URL buildURL(String sortOrder){
+
         Uri builtUri = Uri.parse(sortOrder).buildUpon()
                 .appendQueryParameter("api_key", TMDB_API_KEY).build();
 

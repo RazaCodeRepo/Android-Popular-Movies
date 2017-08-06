@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity{
                 Bundle ratingsBundle = new Bundle();
                 ratingsBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
                 loaderManager.restartLoader(TMDB_QUERY_LOADER, ratingsBundle, movieLoaderCallbacks).forceLoad();
-                setTitle("Sorted By Ratings");
+                setTitle(R.string.ratings_sort);
                 Toast.makeText(this, getResources().getString(R.string.ratings_sort), Toast.LENGTH_SHORT).show();
 
                 return true;
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity{
                 moviesGrid.setAdapter(movieCursorAdapter);
                 getSupportLoaderManager().initLoader(TMDB_CURSOR_LOADER, null, cursorLoaderCallbacks).forceLoad();
                 Toast.makeText(this, getString(R.string.favorite_sort), Toast.LENGTH_SHORT).show();
+                setTitle(R.string.favorite_sort);
                 return true;
 
 

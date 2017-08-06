@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.LoaderManager;
@@ -219,6 +220,7 @@ public class DetailActivity extends AppCompatActivity implements DetailRecyclerV
         Trailer selectedTrailer = trailers.get(index);
         String trailerURL = selectedTrailer.getTrailerURL();
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(trailerURL));
+
         startActivity(intent);
     }
 
