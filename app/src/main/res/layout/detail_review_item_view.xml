@@ -7,9 +7,9 @@
     <ImageView
         android:id="@+id/divider_trailer"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="@dimen/detail_movie_divider_height"
         android:background="@color/colorPrimary"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="@dimen/detail_movie_divider_marginTop"/>
 
 
     <TextView
@@ -18,16 +18,16 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceLarge"
         android:gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginLeft="@dimen/detail_movie_marginLeft"
+        android:layout_marginBottom="@dimen/detail_movie_marginBottomTop"
+        android:layout_marginTop="@dimen/detail_movie_marginBottomTop"/>
 
     <TextView
         android:id="@+id/review_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceMedium"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="@dimen/detail_movie_marginLeft"/>
 
 
 

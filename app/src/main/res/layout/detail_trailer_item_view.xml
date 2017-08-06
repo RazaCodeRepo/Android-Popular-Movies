@@ -10,17 +10,17 @@
 
     <ImageView
         android:id="@+id/trailer_image"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
+        android:layout_width="@dimen/detail_movie_trailer_width"
+        android:layout_height="@dimen/detail_movie_height"
         app:srcCompat="@mipmap/ic_launcher"
         android:layout_weight="1"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="@dimen/detail_movie_marginBottomTop"/>
 
     <TextView
         android:id="@+id/trailer_text"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
+        android:layout_width="@dimen/detail_trailer_text_widthHeight"
+        android:layout_height="@dimen/detail_trailer_text_widthHeight"
+        android:layout_marginLeft="@dimen/detail_movie_marginBottomTop"
         android:text="@string/lv_trailer"
         android:gravity="center_vertical"
         android:textAppearance="?android:textAppearanceLarge"

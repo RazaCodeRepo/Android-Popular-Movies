@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="progress_bar_dimen">42dp</dimen>
+
+    <dimen name="error_text_size">20sp</dimen>
+
+    <dimen name="error_text_padding">16dp</dimen>
+
+    <dimen name="detail_movie_height">150dp</dimen>
+
+    <dimen name="detail_movie_paddingLeft">20dp</dimen>
+
+    <dimen name="detail_movie_poster_marginTop">12dp</dimen>
+
+    <dimen name="detail_movie_poster_marginLeft">27dp</dimen>
+
+    <dimen name="detail_movie_linearLayout_dateTime">25dp</dimen>
+
+    <dimen name="detail_movie_date_marginLeftRight">8dp</dimen>
+
+    <dimen name="detail_movie_date_marginTop">33dp</dimen>
+
+    <dimen name="detail_movie_ratings_marginTop">8dp</dimen>
+
+    <dimen name="detail_movie_ratings_marginLeft">10dp</dimen>
+
+    <dimen name="detail_movie_summary_marginLeft">16dp</dimen>
+
+    <dimen name="detail_movie_summary_marginTop">23dp</dimen>
+
+    <dimen name="detail_movie_summary_marginRght">8dp</dimen>
+
+    <dimen name="detail_movie_divider_height">2dp</dimen>
+
+    <dimen name="detail_movie_divider_marginTop">15dp</dimen>
+
+    <dimen name="detail_movie_marginLeft">10dp</dimen>
+
+    <dimen name="detail_movie_trailer_width">100dp</dimen>
+
+    <dimen name="detail_movie_marginBottomTop">10dp</dimen>
+
+    <dimen name="detail_trailer_text_widthHeight">50dp</dimen>
+
+
+
+
+</resources>

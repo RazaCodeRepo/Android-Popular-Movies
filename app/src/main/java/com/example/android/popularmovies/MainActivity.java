@@ -57,11 +57,14 @@ public class MainActivity extends AppCompatActivity{
 
     private MovieCursorAdapter movieCursorAdapter;
 
+
     private int selectedMovieID;
 
     boolean checkPopularity = false;
     boolean checkRatings = false;
     boolean checkFavorites = false;
+
+    private int scrollPosition = 0;
 
 
     @Override
@@ -84,66 +87,79 @@ public class MainActivity extends AppCompatActivity{
             if(savedInstanceState.getBoolean("POPULARITY_CHECK")){
                 Bundle restorePopularityBundle = new Bundle();
                 restorePopularityBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
-                getSupportLoaderManager().initLoader(TMDB_QUERY_LOADER, restorePopularityBundle, movieLoaderCallbacks).forceLoad();
+                scrollPosition = savedInstanceState.getInt("SCROLL_POSITION");
+                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, restorePopularityBundle, movieLoaderCallbacks).forceLoad();
+
+                checkPopularity = true;
+                checkRatings = false;
+                checkFavorites = false;
             } else if(savedInstanceState.getBoolean("RATING_CHECK")){
                 Bundle restoreRatingBundle = new Bundle();
                 restoreRatingBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
-                getSupportLoaderManager().initLoader(TMDB_QUERY_LOADER, restoreRatingBundle, movieLoaderCallbacks).forceLoad();
-            } else{
+                scrollPosition = savedInstanceState.getInt("SCORLL_POSITION");
+                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, restoreRatingBundle, movieLoaderCallbacks).forceLoad();
+                checkRatings = true;
+                checkPopularity = false;
+                checkFavorites = false;
+            } else if (savedInstanceState.getBoolean("FAVORITE_CHECK")){
+                scrollPosition = savedInstanceState.getInt("SCORLL_POSITION");
                 getSupportLoaderManager().initLoader(TMDB_CURSOR_LOADER, null, cursorLoaderCallbacks).forceLoad();
-            }
-        }
-
-        Bundle queryBundle = new Bundle();
-
-
-        moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Movie movie = mMovieAdapter.getItem(position);
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra("MOVIE_ID", movie.getMovieID());
-                intent.putExtra("MOVIE_TITLE", movie.getOriginalTitle());
-                intent.putExtra("MOVIE_IMAGE", movie.getImageString());
-                intent.putExtra("MOVIE_SUMMARY", movie.getPlotSynopsis());
-                intent.putExtra("MOVIE_RATING", movie.getUserRating());
-                intent.putExtra("MOVIE_DATE", movie.getRelaseDate());
-                intent.putExtra("SELECTED_ID", Integer.toString(selectedMovieID));
-
-
-                startActivity(intent);
-            }
-        });
-
-
-
-
-        queryBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
-
-
-        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isConnectedOrConnecting()) {
-
-            loaderManager = getSupportLoaderManager();
-            Loader<List<Movie>> movieLoader = loaderManager.getLoader(TMDB_QUERY_LOADER);
-            if(movieLoader == null){
-
-                loaderManager.initLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
-                checkPopularity = true;
+                checkFavorites = true;
+                checkPopularity = false;
                 checkRatings = false;
-                checkFavorites = false;
             }
-            else{
-                loaderManager.restartLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
-                checkPopularity = true;
-                checkRatings = false;
-                checkFavorites = false;
+        } else {
+
+
+            Bundle queryBundle = new Bundle();
+
+
+            moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Movie movie = mMovieAdapter.getItem(position);
+                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                    intent.putExtra("MOVIE_ID", movie.getMovieID());
+                    intent.putExtra("MOVIE_TITLE", movie.getOriginalTitle());
+                    intent.putExtra("MOVIE_IMAGE", movie.getImageString());
+                    intent.putExtra("MOVIE_SUMMARY", movie.getPlotSynopsis());
+                    intent.putExtra("MOVIE_RATING", movie.getUserRating());
+                    intent.putExtra("MOVIE_DATE", movie.getRelaseDate());
+                    intent.putExtra("SELECTED_ID", Integer.toString(selectedMovieID));
+
+
+                    startActivity(intent);
+                }
+            });
+
+
+            queryBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
+
+
+            ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+
+                loaderManager = getSupportLoaderManager();
+                Loader<List<Movie>> movieLoader = loaderManager.getLoader(TMDB_QUERY_LOADER);
+                if (movieLoader == null) {
+
+                    loaderManager.initLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
+                    checkPopularity = true;
+                    checkRatings = false;
+                    checkFavorites = false;
+                    Log.v(TAG, "In init movie loader");
+                } else {
+                    loaderManager.restartLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
+                    checkPopularity = true;
+                    checkRatings = false;
+                    checkFavorites = false;
+                    Log.v(TAG, "In restart movie loader");
+                }
+            } else {
+                progressBar.setVisibility(View.GONE);
+                mErrorMessageDisplay.setVisibility(View.VISIBLE);
             }
-        }
-        else{
-            progressBar.setVisibility(View.GONE);
-            mErrorMessageDisplay.setVisibility(View.VISIBLE);
         }
 
 
@@ -163,7 +179,7 @@ public class MainActivity extends AppCompatActivity{
             case R.id.menu_popular:
                 Bundle popularityBundle = new Bundle();
                 popularityBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
-                loaderManager.restartLoader(TMDB_QUERY_LOADER, popularityBundle, movieLoaderCallbacks).forceLoad();
+                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, popularityBundle, movieLoaderCallbacks).forceLoad();
                 checkPopularity = true;
                 checkRatings = false;
                 checkFavorites = false;
@@ -174,7 +190,7 @@ public class MainActivity extends AppCompatActivity{
             case R.id.menu_rating:
                 Bundle ratingsBundle = new Bundle();
                 ratingsBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
-                loaderManager.restartLoader(TMDB_QUERY_LOADER, ratingsBundle, movieLoaderCallbacks).forceLoad();
+                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, ratingsBundle, movieLoaderCallbacks).forceLoad();
                 checkRatings = true;
                 checkPopularity = false;
                 checkFavorites = false;
@@ -245,12 +261,15 @@ public class MainActivity extends AppCompatActivity{
                             MovieContract.MovieEntry.COLUMN_MOVIE_RATING,
                             MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS };
 
+                    Log.v(TAG, "In loadInBackground cursor loader");
+
                     return getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, projection, null, null, null);
                 }
 
                 public void deliverResult(Cursor data){
-                    mMovieData = data;
                     super.deliverResult(data);
+                    mMovieData = data;
+                    Log.v(TAG, "In deliverResult cursor loader");
                 }
             };
         }
@@ -281,6 +300,7 @@ public class MainActivity extends AppCompatActivity{
             }
             mMovieAdapter = new MovieArrayAdapter(MainActivity.this, dbMovies);
             moviesGrid.setAdapter(mMovieAdapter);
+            moviesGrid.smoothScrollToPosition(scrollPosition);
         }
 
         @Override
@@ -323,6 +343,7 @@ public class MainActivity extends AppCompatActivity{
                 showMovieData();
                 mMovieAdapter = new MovieArrayAdapter(MainActivity.this, data);
                 moviesGrid.setAdapter(mMovieAdapter);
+                moviesGrid.smoothScrollToPosition(scrollPosition);
             }
             else{
                 showErrorMessage();
@@ -341,6 +362,8 @@ public class MainActivity extends AppCompatActivity{
         outState.putBoolean("POPULARITY_CHECK", checkPopularity);
         outState.putBoolean("RATING_CHECK", checkRatings);
         outState.putBoolean("FAVORITE_CHECK", checkFavorites);
+        scrollPosition = moviesGrid.getFirstVisiblePosition();
+        outState.putInt("SCROLL_POSITION", scrollPosition);
     }
 
     @Override

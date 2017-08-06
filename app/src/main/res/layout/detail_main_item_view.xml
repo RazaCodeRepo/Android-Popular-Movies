@@ -9,13 +9,13 @@
     <TextView
         android:id="@+id/detail_tv_movieTitle"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="@dimen/detail_movie_height"
         android:background="@color/colorMovieView"
         tools:text="@string/tv_movieTitle"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="@color/colorWhite"
         android:gravity="center_vertical"
-        android:paddingLeft="20dp" />
+        android:paddingLeft="@dimen/detail_movie_paddingLeft" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,14 +27,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@mipmap/ic_launcher"
-            android:layout_marginTop="12dp"
-            android:layout_marginLeft="27dp" />
+            android:layout_marginTop="@dimen/detail_movie_poster_marginTop"
+            android:layout_marginLeft="@dimen/detail_movie_poster_marginLeft" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginLeft="25dp">
+            android:layout_marginLeft="@dimen/detail_movie_linearLayout_dateTime">
 
             <TextView
                 android:id="@+id/detail_tv_date"
@@ -42,9 +42,9 @@
                 android:layout_height="wrap_content"
                 tools:text="@string/tv_movieReleaseDate"
                 android:textAppearance="?android:textAppearanceLarge"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="33dp"/>
+                android:layout_marginLeft="@dimen/detail_movie_date_marginLeftRight"
+                android:layout_marginRight="@dimen/detail_movie_date_marginLeftRight"
+                android:layout_marginTop="@dimen/detail_movie_date_marginTop"/>
 
             <TextView
                 android:id="@+id/detail_tv_ratings"
@@ -52,8 +52,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/tv_movieRatings"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="10dp" />
+                android:layout_marginTop="@dimen/detail_movie_ratings_marginTop"
+                android:layout_marginLeft="@dimen/detail_movie_ratings_marginLeft" />
 
 
 
@@ -68,26 +68,26 @@
         android:layout_height="wrap_content"
         android:text="@string/tv_movieSummary"
         android:textAppearance="?android:textAppearanceMedium"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginRight="8dp"/>
+        android:layout_marginLeft="@dimen/detail_movie_summary_marginLeft"
+        android:layout_marginTop="@dimen/detail_movie_summary_marginTop"
+        android:layout_marginRight="@dimen/detail_movie_summary_marginRght"/>
 
     <ImageView
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="@dimen/detail_movie_divider_height"
         android:background="@color/colorPrimary"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="@dimen/detail_movie_divider_marginTop"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/detail_movie_marginLeft"
         android:text="@string/tv_trailerTag"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="@dimen/detail_movie_marginBottomTop"
         android:textAppearance="?android:textAppearanceLarge"
         android:gravity="center_vertical"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="@dimen/detail_movie_marginBottomTop"/>
 
 
 </LinearLayout>
