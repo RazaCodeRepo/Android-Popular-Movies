@@ -113,28 +113,7 @@ public class MainActivity extends AppCompatActivity{
 
             Bundle queryBundle = new Bundle();
 
-
-            moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Movie movie = mMovieAdapter.getItem(position);
-                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                    intent.putExtra("MOVIE_ID", movie.getMovieID());
-                    intent.putExtra("MOVIE_TITLE", movie.getOriginalTitle());
-                    intent.putExtra("MOVIE_IMAGE", movie.getImageString());
-                    intent.putExtra("MOVIE_SUMMARY", movie.getPlotSynopsis());
-                    intent.putExtra("MOVIE_RATING", movie.getUserRating());
-                    intent.putExtra("MOVIE_DATE", movie.getRelaseDate());
-                    intent.putExtra("SELECTED_ID", Integer.toString(selectedMovieID));
-
-
-                    startActivity(intent);
-                }
-            });
-
-
             queryBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
-
 
             ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -162,7 +141,23 @@ public class MainActivity extends AppCompatActivity{
             }
         }
 
+        moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie movie = mMovieAdapter.getItem(position);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("MOVIE_ID", movie.getMovieID());
+                intent.putExtra("MOVIE_TITLE", movie.getOriginalTitle());
+                intent.putExtra("MOVIE_IMAGE", movie.getImageString());
+                intent.putExtra("MOVIE_SUMMARY", movie.getPlotSynopsis());
+                intent.putExtra("MOVIE_RATING", movie.getUserRating());
+                intent.putExtra("MOVIE_DATE", movie.getRelaseDate());
+                intent.putExtra("SELECTED_ID", Integer.toString(selectedMovieID));
 
+
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -201,7 +196,6 @@ public class MainActivity extends AppCompatActivity{
 
             case R.id.menu_favorite:
 
-
                 movieCursorAdapter = new MovieCursorAdapter(this, null);
                 moviesGrid.setAdapter(movieCursorAdapter);
                 getSupportLoaderManager().initLoader(TMDB_CURSOR_LOADER, null, cursorLoaderCallbacks).forceLoad();
@@ -211,7 +205,6 @@ public class MainActivity extends AppCompatActivity{
                 checkRatings = false;
                 setTitle(R.string.favorite_sort);
                 return true;
-
 
             default:
                 return super.onOptionsItemSelected(item);

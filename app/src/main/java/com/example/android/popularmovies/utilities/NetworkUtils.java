@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.android.popularmovies.Movie;
 import com.example.android.popularmovies.MovieReview;
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Trailer;
 
 import org.json.JSONArray;
@@ -32,7 +33,7 @@ public final class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getName();
     //any changes
 
-    private static final String TMDB_API_KEY = "";
+    private static final String TMDB_API_KEY = "e5e3fe86c705926ad4e294aea744d322";
 
     private static final String TMDB_TRAILER_REVIEWS = "https://api.themoviedb.org/3/movie/";
 
@@ -64,6 +65,9 @@ public final class NetworkUtils {
 
         Uri builtUri = Uri.parse(sortOrder).buildUpon()
                 .appendQueryParameter("api_key", TMDB_API_KEY).build();
+
+
+
 
         URL url = null;
         try{
