@@ -24,11 +24,12 @@
 
         <ImageView
             android:id="@+id/detail_iv_poster"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             app:srcCompat="@mipmap/ic_launcher"
             android:layout_marginTop="@dimen/detail_movie_poster_marginTop"
-            android:layout_marginLeft="@dimen/detail_movie_poster_marginLeft" />
+            android:layout_marginLeft="@dimen/detail_movie_poster_marginLeft"
+            android:adjustViewBounds="true"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
