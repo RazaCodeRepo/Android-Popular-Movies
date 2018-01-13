@@ -4,6 +4,9 @@ This app presents the user with a list of popular movies available coming out th
 ## Screenshots
 <img src="images/mainscreen.png" width="25%" /> <img src="images/detailscreen.png" width="25%" />
 
+## Demo
+<img src="images/popular_moives_demo.gif" width="300" />
+
 ## Features
 * The app gets updated in real-time
 * Comes with three filters
