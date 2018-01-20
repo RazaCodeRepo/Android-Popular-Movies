@@ -33,7 +33,7 @@ public final class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getName();
     //any changes
 
-    private static final String TMDB_API_KEY = "e5e3fe86c705926ad4e294aea744d322";
+    private static final String TMDB_API_KEY = "";
 
     private static final String TMDB_TRAILER_REVIEWS = "https://api.themoviedb.org/3/movie/";
 
