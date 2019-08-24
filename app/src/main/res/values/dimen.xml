@@ -12,9 +12,9 @@
 
     <dimen name="detail_movie_poster_marginTop">12dp</dimen>
 
-    <dimen name="detail_movie_poster_marginLeft">27dp</dimen>
+    <dimen name="detail_movie_poster_marginLeft">10dp</dimen>
 
-    <dimen name="detail_movie_linearLayout_dateTime">25dp</dimen>
+    <dimen name="detail_movie_linearLayout_dateTime">10dp</dimen>
 
     <dimen name="detail_movie_date_marginLeftRight">8dp</dimen>
 

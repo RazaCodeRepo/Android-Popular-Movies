@@ -8,6 +8,10 @@
         </compositeConfiguration>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+=======
+        <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-4.2" />
+>>>>>>> 1a98da1b7301c5ed260e7e0bc480e3103ca7d845
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />

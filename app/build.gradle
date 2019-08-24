@@ -1,8 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
+<<<<<<< HEAD
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
+=======
+    compileSdkVersion 25
+    buildToolsVersion '26.0.2'
+>>>>>>> 1a98da1b7301c5ed260e7e0bc480e3103ca7d845
     defaultConfig {
         applicationId "com.example.android.popularmovies"
         minSdkVersion 22

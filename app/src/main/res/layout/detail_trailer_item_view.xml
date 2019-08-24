@@ -14,7 +14,8 @@
         android:layout_height="@dimen/detail_movie_height"
         app:srcCompat="@mipmap/ic_launcher"
         android:layout_weight="1"
-        android:layout_marginBottom="@dimen/detail_movie_marginBottomTop"/>
+        android:layout_marginBottom="@dimen/detail_movie_marginBottomTop"
+        android:paddingLeft="@dimen/detail_movie_marginLeft"/>
 
     <TextView
         android:id="@+id/trailer_text"

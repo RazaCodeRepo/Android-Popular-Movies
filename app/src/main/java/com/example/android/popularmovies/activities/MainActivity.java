@@ -104,9 +104,42 @@ public class MainActivity extends AppCompatActivity{
                 checkRatings = false;
             }
         } else {
+<<<<<<< HEAD:app/src/main/java/com/example/android/popularmovies/activities/MainActivity.java
             progressBar.setVisibility(View.VISIBLE);
             setMoviesList("popular");
             checkPopularity = true;
+=======
+
+
+            Bundle queryBundle = new Bundle();
+
+            queryBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
+
+            ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+
+                loaderManager = getSupportLoaderManager();
+                Loader<List<Movie>> movieLoader = loaderManager.getLoader(TMDB_QUERY_LOADER);
+                if (movieLoader == null) {
+
+                    loaderManager.initLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
+                    checkPopularity = true;
+                    checkRatings = false;
+                    checkFavorites = false;
+                    Log.v(TAG, "In init movie loader");
+                } else {
+                    loaderManager.restartLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
+                    checkPopularity = true;
+                    checkRatings = false;
+                    checkFavorites = false;
+                    Log.v(TAG, "In restart movie loader");
+                }
+            } else {
+                progressBar.setVisibility(View.GONE);
+                mErrorMessageDisplay.setVisibility(View.VISIBLE);
+            }
+>>>>>>> 1a98da1b7301c5ed260e7e0bc480e3103ca7d845:app/src/main/java/com/example/android/popularmovies/MainActivity.java
         }
 
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
