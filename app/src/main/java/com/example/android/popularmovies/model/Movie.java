@@ -1,4 +1,6 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.model;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +11,23 @@ import java.util.List;
 
 public class Movie {
 
+    @SerializedName("title")
     private String originalTitle;
-    private String imageString;
-    private String plotSynopsis;
-    private String userRating;
-    private String relaseDate;
-    private String movieID;
 
+    @SerializedName("poster_path")
+    private String imageString;
+
+    @SerializedName("overview")
+    private String plotSynopsis;
+
+    @SerializedName("vote_average")
+    private String userRating;
+
+    @SerializedName("release_date")
+    private String relaseDate;
+
+    @SerializedName("id")
+    private String movieID;
 
     public Movie(String id, String title, String image, String synopsis, String rating, String date){
         movieID = id;
@@ -24,7 +36,6 @@ public class Movie {
         plotSynopsis = synopsis;
         userRating = rating;
         relaseDate = date;
-
     }
 
     public String getMovieID(){return movieID; }
@@ -49,9 +60,9 @@ public class Movie {
         return userRating;
     }
 
-
     public String toString(){
         return movieID + " " + originalTitle + " " + imageString + " " + plotSynopsis + " " + userRating + " " + relaseDate;
     }
 }
+
 

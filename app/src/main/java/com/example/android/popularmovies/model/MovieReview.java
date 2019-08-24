@@ -1,4 +1,6 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.model;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Kontrol on 7/31/2017.
@@ -6,12 +8,16 @@ package com.example.android.popularmovies;
 
 public class MovieReview {
 
+    @SerializedName("id")
     private String reviewID;
 
+    @SerializedName("author")
     private String reviewAuthor;
 
+    @SerializedName("url")
     private String reviewURL;
 
+    @SerializedName("content")
     private String reviewContent;
 
     public MovieReview(String id, String author, String url, String content){

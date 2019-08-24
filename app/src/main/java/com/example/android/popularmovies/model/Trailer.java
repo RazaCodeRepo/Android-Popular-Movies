@@ -1,4 +1,6 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.model;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +15,21 @@ public class Trailer {
 
     private final String YOUTUBE_APP_INTENT = "https://img.youtube.com/vi/";
 
+    @SerializedName("id")
     private String trailerID;
 
+    @SerializedName("key")
     private String trailerKey;
 
+    @SerializedName("name")
     private String trailerName;
 
+    @SerializedName("site")
     private String trailerSite;
 
-   private String trailer_thumbnail;
+    private String trailer_thumbnail;
 
-
+    private static List<Trailer> temp = new ArrayList<Trailer>();
 
     public Trailer(String id, String key, String name, String site){
         trailerID = id;
@@ -51,7 +57,6 @@ public class Trailer {
         return YOUTUBE_URL + trailerKey;
     }
 
-
     public String getTrailer_thumbnail(){
         return YOUTUBE_APP_INTENT + trailerKey + "/hqdefault.jpg";
     }
@@ -59,7 +64,6 @@ public class Trailer {
     public String toString(){
         return YOUTUBE_URL + trailerKey;
     }
-
 
 
 }

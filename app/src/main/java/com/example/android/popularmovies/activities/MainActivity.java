@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.activities;
 
 import android.content.Context;
 
@@ -7,14 +7,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.AsyncTaskLoader;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,20 +21,23 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.android.popularmovies.model.Movie;
+import com.example.android.popularmovies.adapters.MovieArrayAdapter;
+import com.example.android.popularmovies.adapters.MovieCursorAdapter;
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.MovieContract;
-import com.example.android.popularmovies.utilities.NetworkUtils;
-
+import com.example.android.popularmovies.model.MoviesList;
+import com.example.android.popularmovies.network.GetDataService;
+import com.example.android.popularmovies.network.RetrofitClientInstance;
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity{
 
     private static final String TAG = MainActivity.class.getName();
-
-    private static final String TMDB_POPULAR_URL = "https://api.themoviedb.org/3/movie/popular?";
-
-    private static final String TMDB_RATING_URL = "https://api.themoviedb.org/3/movie/top_rated?";
 
     private TextView mErrorMessageDisplay;
 
@@ -47,11 +47,7 @@ public class MainActivity extends AppCompatActivity{
 
     private MovieArrayAdapter mMovieAdapter;
 
-    private static final int TMDB_QUERY_LOADER = 122;
-
     private static final int TMDB_CURSOR_LOADER = 345;
-
-    private LoaderManager loaderManager;
 
     private static final String LOADER_TMDB_BUNDLE = "stringURL";
 
@@ -85,19 +81,18 @@ public class MainActivity extends AppCompatActivity{
 
         if(savedInstanceState != null){
             if(savedInstanceState.getBoolean("POPULARITY_CHECK")){
-                Bundle restorePopularityBundle = new Bundle();
-                restorePopularityBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
                 scrollPosition = savedInstanceState.getInt("SCROLL_POSITION");
-                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, restorePopularityBundle, movieLoaderCallbacks).forceLoad();
+
+                setMoviesList("popular");
 
                 checkPopularity = true;
                 checkRatings = false;
                 checkFavorites = false;
             } else if(savedInstanceState.getBoolean("RATING_CHECK")){
-                Bundle restoreRatingBundle = new Bundle();
-                restoreRatingBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
                 scrollPosition = savedInstanceState.getInt("SCORLL_POSITION");
-                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, restoreRatingBundle, movieLoaderCallbacks).forceLoad();
+
+                setMoviesList("top_rated");
+
                 checkRatings = true;
                 checkPopularity = false;
                 checkFavorites = false;
@@ -109,60 +104,28 @@ public class MainActivity extends AppCompatActivity{
                 checkRatings = false;
             }
         } else {
-
-
-            Bundle queryBundle = new Bundle();
-
-
-            moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Movie movie = mMovieAdapter.getItem(position);
-                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                    intent.putExtra("MOVIE_ID", movie.getMovieID());
-                    intent.putExtra("MOVIE_TITLE", movie.getOriginalTitle());
-                    intent.putExtra("MOVIE_IMAGE", movie.getImageString());
-                    intent.putExtra("MOVIE_SUMMARY", movie.getPlotSynopsis());
-                    intent.putExtra("MOVIE_RATING", movie.getUserRating());
-                    intent.putExtra("MOVIE_DATE", movie.getRelaseDate());
-                    intent.putExtra("SELECTED_ID", Integer.toString(selectedMovieID));
-
-
-                    startActivity(intent);
-                }
-            });
-
-
-            queryBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
-
-
-            ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
-
-                loaderManager = getSupportLoaderManager();
-                Loader<List<Movie>> movieLoader = loaderManager.getLoader(TMDB_QUERY_LOADER);
-                if (movieLoader == null) {
-
-                    loaderManager.initLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
-                    checkPopularity = true;
-                    checkRatings = false;
-                    checkFavorites = false;
-                    Log.v(TAG, "In init movie loader");
-                } else {
-                    loaderManager.restartLoader(TMDB_QUERY_LOADER, queryBundle, movieLoaderCallbacks).forceLoad();
-                    checkPopularity = true;
-                    checkRatings = false;
-                    checkFavorites = false;
-                    Log.v(TAG, "In restart movie loader");
-                }
-            } else {
-                progressBar.setVisibility(View.GONE);
-                mErrorMessageDisplay.setVisibility(View.VISIBLE);
-            }
+            progressBar.setVisibility(View.VISIBLE);
+            setMoviesList("popular");
+            checkPopularity = true;
         }
 
+        moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Movie movie = mMovieAdapter.getItem(position);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("MOVIE_ID", movie.getMovieID());
+                intent.putExtra("MOVIE_TITLE", movie.getOriginalTitle());
+                intent.putExtra("MOVIE_IMAGE", movie.getImageString());
+                intent.putExtra("MOVIE_SUMMARY", movie.getPlotSynopsis());
+                intent.putExtra("MOVIE_RATING", movie.getUserRating());
+                intent.putExtra("MOVIE_DATE", movie.getRelaseDate());
+                intent.putExtra("SELECTED_ID", Integer.toString(selectedMovieID));
 
+
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -177,30 +140,29 @@ public class MainActivity extends AppCompatActivity{
 
         switch(item.getItemId()){
             case R.id.menu_popular:
-                Bundle popularityBundle = new Bundle();
-                popularityBundle.putString(LOADER_TMDB_BUNDLE, TMDB_POPULAR_URL);
-                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, popularityBundle, movieLoaderCallbacks).forceLoad();
+                setMoviesList("popular");
+
                 checkPopularity = true;
                 checkRatings = false;
                 checkFavorites = false;
+
                 Toast.makeText(this, getResources().getString(R.string.popularity_sort), Toast.LENGTH_SHORT).show();
 
                 return true;
 
             case R.id.menu_rating:
-                Bundle ratingsBundle = new Bundle();
-                ratingsBundle.putString(LOADER_TMDB_BUNDLE, TMDB_RATING_URL);
-                getSupportLoaderManager().restartLoader(TMDB_QUERY_LOADER, ratingsBundle, movieLoaderCallbacks).forceLoad();
+                setMoviesList("top_rated");
+
                 checkRatings = true;
                 checkPopularity = false;
                 checkFavorites = false;
                 setTitle(R.string.ratings_sort);
+
                 Toast.makeText(this, getResources().getString(R.string.ratings_sort), Toast.LENGTH_SHORT).show();
 
                 return true;
 
             case R.id.menu_favorite:
-
 
                 movieCursorAdapter = new MovieCursorAdapter(this, null);
                 moviesGrid.setAdapter(movieCursorAdapter);
@@ -211,7 +173,6 @@ public class MainActivity extends AppCompatActivity{
                 checkRatings = false;
                 setTitle(R.string.favorite_sort);
                 return true;
-
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -232,8 +193,6 @@ public class MainActivity extends AppCompatActivity{
         /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
-
-
 
     private LoaderManager.LoaderCallbacks<Cursor> cursorLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>(){
         @Override
@@ -309,52 +268,34 @@ public class MainActivity extends AppCompatActivity{
         }
     };
 
-    private LoaderManager.LoaderCallbacks<List<Movie>> movieLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<Movie>>(){
-        @Override
-        public Loader<List<Movie>> onCreateLoader(int id, final Bundle args) {
-            return new AsyncTaskLoader<List<Movie>>(MainActivity.this){
-
-
+    private void setMoviesList(String sortBy){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+            GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
+            Call<MoviesList> call = service.getAllMovies(sortBy, "e5e3fe86c705926ad4e294aea744d322");
+            Log.v(TAG, call.request().url().toString());
+            call.enqueue(new Callback<MoviesList>() {
                 @Override
-                protected void onStartLoading() {
-                    if(args == null){
-                        return;
-                    }
-                    progressBar.setVisibility(View.VISIBLE);
+                public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
+                    progressBar.setVisibility(View.GONE);
+                    List<Movie> movies = response.body().getResults();
+                    mMovieAdapter = new MovieArrayAdapter(MainActivity.this, movies);
+                    moviesGrid.setAdapter(mMovieAdapter);
+                    moviesGrid.smoothScrollToPosition(scrollPosition);
                 }
 
                 @Override
-                public List<Movie> loadInBackground() {
-                    String tmdbSearchQuery = args.getString(LOADER_TMDB_BUNDLE);
-                    Log.v(TAG, tmdbSearchQuery);
-                    if(tmdbSearchQuery == null || TextUtils.isEmpty(tmdbSearchQuery)){
-                        return null;
-                    }
-                    List<Movie> moviesList = NetworkUtils.extractMovies(tmdbSearchQuery);
-                    return moviesList;
+                public void onFailure(Call<MoviesList> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
                 }
-            };
+            });
         }
-
-        @Override
-        public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
-            progressBar.setVisibility(View.INVISIBLE);
-            if(data != null){
-                showMovieData();
-                mMovieAdapter = new MovieArrayAdapter(MainActivity.this, data);
-                moviesGrid.setAdapter(mMovieAdapter);
-                moviesGrid.smoothScrollToPosition(scrollPosition);
-            }
-            else{
-                showErrorMessage();
-            }
+        else{
+            progressBar.setVisibility(View.GONE);
+            mErrorMessageDisplay.setVisibility(View.VISIBLE);
         }
-
-        @Override
-        public void onLoaderReset(Loader<List<Movie>> loader) {
-
-        }
-    };
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -364,14 +305,6 @@ public class MainActivity extends AppCompatActivity{
         outState.putBoolean("FAVORITE_CHECK", checkFavorites);
         scrollPosition = moviesGrid.getFirstVisiblePosition();
         outState.putInt("SCROLL_POSITION", scrollPosition);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        boolean check_popularity = savedInstanceState.getBoolean("POPULARITY_CHECK");
-        boolean check_ratings = savedInstanceState.getBoolean("RATING_CHECK");
-        boolean check_favorites = savedInstanceState.getBoolean("FAVORITE_CHECK");
     }
 }
 
